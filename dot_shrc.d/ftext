@@ -1,0 +1,18 @@
+ftext() {
+
+  # Add --quiet to stop the annoying welcome banner
+  #grep -iIHrn --color=always "${1}" "${2}" | less -R -r
+  if [[ ${#} -lt 1 ]]; then
+    printf "Need to put in regex expression\n"
+  elif [[ ${#} -eq 1 ]]; then
+    regex=${1}
+    dir="."
+  elif [[ ${#} -eq 2 ]]; then
+    regex=${1}
+    dir=${2}
+  else
+    printf "To many arguments"
+    printf "ftext "regex" dir"
+  fi
+  rg --color always "${regex}" ${dir} | less -R -r
+}
