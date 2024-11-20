@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+case "${XDG_CURRENT_DESKTOP,,}" in
+  *cinnamon*)
+    cinnamon-session-quit
+    #cinnamon-session-quit --no-prompt
+    #cinnamon-session-quit --force
+    ;;
+  deepin) echo Deepin ;;
+  enlightenment)
+    gnome-session-quit
+    #gnome-session-quit --no-prompt
+    #gnome-session-quit --force
+    ;;
+  *gnome*)
+    gnome-session-quit
+    #gnome-session-quit --no-prompt
+    #gnome-session-quit --force
+    ;;
+  kde) 
+    qdbus org.kde.ksmserver /KSMServer logout 0 0 3
+    # < >  < >  < >
+    #  |    |    +----> 0 - act after all sessions have ended
+    #  |    |    +----> 1 - act if no active sessions
+    #  |    |    +----> 2 - force
+    #  |    |    +----> 3 - ask what to do if session still active
+    #  |    +---------> 0 - logout
+    #  |    +---------> 1 - reboot
+    #  |    +---------> 2 - halt
+    #  +--------------> 0 - no confirm
+    #  +--------------> 1 - pop-up logout dialog
+    ;;
+  lxde)
+    lxde-logout
+    obsession-logout
+    ;;
+  lxqt)
+    #lxqt-leave
+    lqxt-leave --logout  # shows only logout dialog
+    ;;
+  mate) 
+    mate-session-save --logout-dialog # provides logout dialog
+    #mate-session-save --logout        # no dialog
+    #mate-session-save --force         
+    ;;
+  xfce) 
+    xfce-session-logout
+    #xfce-session-logout --logout     # no prompt
+    #xfce-session-logout --fast        # quit without saving work
+    ;;
+  *) echo unsupported ;;
+esac

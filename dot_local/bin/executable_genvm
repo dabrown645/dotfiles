@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+if [[ ${#} -ne 1  ]]; then
+  printf "You are required to enter the file name for the image\n"
+  exit 1
+fi
+
+image=${1}
+
+if [[ ! -e ${image} ]]; then
+  printf "File ${image} does not exist\n"
+fi
+
+type=${image##*.}
+
+tmp=${image##*/}
+tmp_distro=${tmp%%.*}
+unset tmp
+
+read -p "Enter desired distro name [${tmp_distro}]-> " ans
+distro=${ans:=${tmp_distro}}
+  
+read -p "Enter name for start script-> " script
+
+if [[ -e ${distro}  ]]; then
+  read -p "${distro} exists do you wnat to replace it [y/N]-> " ans
+  if [[ ${ans^^} == "Y" ]]; then
+    rm -rf ${distro} ${distro}.conf ${script}
+  else
+    exit 1
+  fi
+fi
+
+mkdir ${distro}
+cp ${image} ${distro}
+
+cat > ${distro}.conf << EOF
+#!/usr/bin/quickemu --vm
+guest_os="linux"
+disk_img="${distro}/disk.qcow2"
+${type}="${distro}.${type}"
+disk_size="80G"
+iso="alpine-v3.20/alpine-virt-3.20.3-x86_64.iso"
+EOF
+
+cat > ${script} << EOF
+#!/usr/bin/env bash
+
+myoptions="--screen 0 --screenpct 70"
+
+cmd=\${QUICKEMU:=quickemu}
+
+eval \${cmd} --vm ${distro}.conf \${myoptions} \${@}
+EOF
+
+chmod +x ${script}
+
