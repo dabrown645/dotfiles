@@ -1,0 +1,4 @@
+host 10.* 127.* localhost
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  LogLevel QUIET
