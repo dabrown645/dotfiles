@@ -1,0 +1,29 @@
+{{- $name := promptStringOnce . "name" "Your name please" -}}
+{{- $email := promptStringOnce . "email" "Your email please" -}}
+{{- $username := promptStringOnce . "username" "Your username please" -}}
+
+encryption = "age"
+[age]
+    identity = "~/.config/chezmoi/key.txt"
+    recipient = "age1ceeh3zh46v2hnu0clhdl4mz9e965g9f7pcg8rts79qak8yxpjexs9eq3zm"
+
+[edit]
+    command = "nvim"
+
+[diff]
+    command = "nvim"
+    args = ["-d"]
+
+[merge]
+    command = "nvim"
+    args = [
+       "-d",
+       {{ printf "%q" "{{ .Destination }}" }},
+       {{ printf "%q" "{{ .Source }}" }},
+       {{ printf "%q" "{{ .Target }}" }},
+    ]
+
+[data]
+    name = {{ $name | quote }}
+    email = {{ $email | quote }}
+    username = {{ $username | quote }}
