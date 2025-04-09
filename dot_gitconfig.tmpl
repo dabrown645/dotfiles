@@ -1,50 +1,53 @@
 # This is Git's per-user configuration file.
 [user]
-# Please adapt and uncomment the following lines:
-    name = {{ .name | quote }}
-    email = {{ .email | quote }}
-    username = {{ .username | quote }}
+  # Please adapt and uncomment the following lines:
+  name = {{ .name | quote }}
+  email = {{ .email | quote }}
+  username = {{ .username | quote }}
 
 [pretty]
-    better-oneline = "format:%C(auto)%h%d %s %Cblue[%dn]"
+  better-oneline = "format:%C(auto)%h%d %s %Cblue[%dn]"
+
+[diff]
+  tool = ndiff -d
 
 [alias]
 
-    # Begin emoji-log aliases
-    # NEW.
-    new = "!f() { git commit -m \"🆕 NEW: $@\"; }; f"
-    # IMPROVE.
-    imp = "!f() { git commit -m \"👌 IMPROVE: $@\"; }; f"
-    # FIX.
-    fix = "!f() { git commit -m \"🐞 FIX: $@\"; }; f"
-    # RELEASE.
-    rel = "!f() { git commit -m \"🚀 RELEASE: $@\"; }; f"
-    # DOC.
-    doc = "!f() { git commit -m \"📖 DOC: $@\"; }; f"
-    # TEST.
-    tst = "!f() { git commit -m \"✅ TEST: $@\"; }; f"
-    # End emoji-log aliases
+  # Begin emoji-log aliases
+  # NEW.
+  new = "!f() { git commit -m \"🆕 NEW: $@\"; }; f"
+  # IMPROVE.
+  imp = "!f() { git commit -m \"👌 IMPROVE: $@\"; }; f"
+  # FIX.
+  fix = "!f() { git commit -m \"🐞 FIX: $@\"; }; f"
+  # RELEASE.
+  rel = "!f() { git commit -m \"🚀 RELEASE: $@\"; }; f"
+  # DOC.
+  doc = "!f() { git commit -m \"📖 DOC: $@\"; }; f"
+  # TEST.
+  tst = "!f() { git commit -m \"✅ TEST: $@\"; }; f"
+  # End emoji-log aliases
 
 [core]
-    editor = nvim
+  editor = nvim
 
 [merge]
-    tool = "ndiff -d"
+  tool = "ndiff -d"
 
 [push]
-    default = current
+  default = current
 
 [init]
-    defaultBranch = main
+  defaultBranch = main
 
 [help]
-    autocorrect = 1
+  autocorrect = 1
 
 [include]
-    path = ~/.gitalias.txt
+  path = ~/.gitalias.txt
 
 [filter "lfs"]
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    process = git-lfs filter-process
-    required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
