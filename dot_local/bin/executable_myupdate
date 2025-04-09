@@ -1,0 +1,13 @@
+hostPrettyName=$(hostnamectl -j | jq -r .OperatingSystemPrettyName)
+case ${hostPrettyName} in
+  "Arch Linux")
+    sudo reflector --country US --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+    yay -Syu
+    ;;
+  "Garuda Linux")
+    update
+    ;;
+  *)
+    printf "Unsupported host %s\n" ${hostPrettyName}
+    ;;
+esac
