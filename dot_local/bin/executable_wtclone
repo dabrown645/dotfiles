@@ -25,10 +25,26 @@ cd "$name"
 # hotfix-bug-12
 # ...
 git clone --bare "$url" .bare
-echo "gitdir: ./.bare" > .git
+echo "gitdir: ./.bare" >.git
 
 # Explicitly sets the remote origin fetch so we can fetch remote branches
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 
 # Gets all branches from origin
-git fetch origin
+git fetch --all --prune
+
+# check out the default branch
+default_branch=$(git --git-dir=.git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+
+# If not set try for "main" or "master"
+if [[ -z "${default_branch}" ]]; then
+  default_branch=$(git branch -r | grep -E 'origin/main|origin/master' | grep -v HEAD | head -n 1 | cut -f 2 -d '/')
+fi
+
+# If still not found, exit with an error
+if [[ -z "${default_branch}" ]]; then
+  echo "❌ Error: Could not determine the primary branch (main or master)."
+  exit 1
+else
+  git worktree add "${default_branch}"
+fi
