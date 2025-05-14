@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+default_branch=$(git default-branch)
+git init --bare .bare
+echo "gitdir: ./.bare" >.git
+git worktree add ${default_branch}
+cd ${default_branch}
+git commit --allow-empty --allow-empty-message --message ""
+cd -
