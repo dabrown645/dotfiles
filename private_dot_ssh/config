@@ -1,4 +1,26 @@
-host 10.* 127.* localhost
+Host garuda
+  Hostname 10.0.0.57
+  User dabrown
+  Loglevel QUIET
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
-  LogLevel QUIET
+
+Host rog1
+  Hostname 10.0.0.93
+  User dabrown
+  Loglevel QUIET
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+
+Host 10.* 127.* localhost
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  # LogLevel QUIET
+  BatchMode yes
+
+# Host backuphost
+#   HostName 10.0.0.57
+#   User dabrown
+#   IdentityFile ~/.ssh/id_ed25519
+#   BatchMode yes
+
