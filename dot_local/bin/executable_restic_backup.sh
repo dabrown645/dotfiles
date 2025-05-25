@@ -55,13 +55,18 @@ echo "--- Running rsync ---"
 
 /usr/bin/rsync -a \
   -e "ssh -i /home/dabrown/.ssh/id_ed25519_backup -o BatchMode=yes -o StrictHostKeyChecking=accept-new" \
+  --delete \
   /Storage/Backups/restic/backups/ \
   dabrown@10.0.0.57:/Storage/Backups/restic/backups/
+# --verbose \
 
 if [[ $? -ne 0 ]]; then
   echo "!!! rsync failed — see /tmp/rsync_debug.log"
   exit 1
 fi
+
+echo "--- Running restic check on remote ---"
+restic -r sftp:dabrown@10.0.0.57:/Storage/Backups/restic/backups check
 
 echo "rsync done"
 echo "=== Backup complete at $(date) ==="
