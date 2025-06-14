@@ -34,7 +34,6 @@ main() {
 
   # Set positional argumentsin theif propper place
   set -- "${PARAMS[@]}"
-  set -x
 
   if ${dryrun}; then
     cmd="echo"
@@ -95,7 +94,6 @@ main() {
     fi
   fi
 
-  set +x
 }
 
 usage() {
