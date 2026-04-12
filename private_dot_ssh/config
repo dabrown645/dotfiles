@@ -18,6 +18,12 @@ Host 10.* 127.* localhost
   # LogLevel QUIET
   BatchMode yes
 
+Host 10.0.0.57
+    User dabrown
+    IdentityFile /home/dabrown/.ssh/id_ed25519_backup
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+
 # Host backuphost
 #   HostName 10.0.0.57
 #   User dabrown
