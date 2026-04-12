@@ -1,0 +1,147 @@
+#!/usr/bin/env bash
+# -----------------------------------------------------------------------------
+# restic_backup
+# Full backup script with local restic, remote rsync, and remote verification
+# Designed for systemd timer/service
+# -----------------------------------------------------------------------------
+
+main() {
+  initialize_environment
+  local_backup
+  rsync_to_remote
+  verify_remote_copy
+
+  log "=== Backup + rsync + remote verification complete ==="
+}
+
+initialize_environment() {
+  # Logging
+  LOGFILE="/tmp/restic_backup.log"
+  exec >"${LOGFILE}" 2>&1
+
+  log "=== Starting backup at $(date) ==="
+  log "Running as user: $(whoami)"
+  log "HOME = ${HOME}"
+  log "PATH = ${PATH}"
+
+  # Backup paths
+  BACKUP_PATHS="/home/dabrown"
+  BACKUP_TAG="systemd.timer"
+
+  # Retention rules
+  RETENTION_HOURLY=25
+  RETENTION_DAYS=9
+  RETENTION_WEEKS=6
+  RETENTION_MONTHS=18
+  RETENTION_YEARS=5
+
+  # SSH / remote info
+  SSH_KEY="$HOME/.local/bin/restic_ssh_key" # wrapper key file path
+  REMOTE_USER="dabrown"
+  REMOTE_HOST="10.0.0.57"
+  REMOTE_PATH="/Storage/Backups/restic/backups"
+
+  # Use SSH wrapper
+  export RESTIC_RSH="$HOME/.local/bin/restic_ssh_key"
+
+  # Repo has no password
+  unset RESTIC_PASSWORD
+
+  # Local restic environment
+  cd "$HOME" || exit 1
+  source "$HOME/.ssh/restic_env" || true
+
+}
+
+local_backup() {
+
+  unlock_backup
+  run_backup
+  prune_backup
+  check_backup
+}
+
+unlock_backup() {
+  log "--- Running restic unlock ---"
+  restic unlock
+}
+
+run_backup() {
+  log "--- Running restic backup ---"
+  restic backup \
+    --verbose \
+    --exclude .cache \
+    --exclude Downloads \
+    --exclude Code \
+    --exclude VMS \
+    --one-file-system \
+    --tag "${BACKUP_TAG}" \
+    "${BACKUP_PATHS}"
+}
+
+prune_backup() {
+  log "--- Running restic forget/prune ---"
+  restic forget \
+    --verbose \
+    --tag "${BACKUP_TAG}" \
+    --prune \
+    --keep-hourly "${RETENTION_HOURLY}" \
+    --keep-daily "${RETENTION_DAYS}" \
+    --keep-weekly "${RETENTION_WEEKS}" \
+    --keep-monthly "${RETENTION_MONTHS}" \
+    --keep-yearly "${RETENTION_YEARS}"
+}
+
+check_backup() {
+  log "--- Verifying local restic repository ---"
+  restic check || {
+    log "!!! Local restic repository check failed"
+    exit 1
+  }
+}
+
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+}
+
+rsync_to_remote() {
+  log "--- Rsyncing restic repository to remote ---"
+
+  # Ensure SSH wrapper exists and is executable
+  if [[ ! -x "$SSH_KEY" ]]; then
+    log "!!! SSH wrapper not found or not executable: $SSH_KEY"
+    exit 1
+  fi
+
+  rsync -a \
+    -e "$SSH_KEY" \
+    --delete \
+    /Storage/Backups/restic/backups/ \
+    "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}" || {
+    log "!!! Rsync to remote failed"
+    exit 1
+  }
+}
+
+verify_remote_copy() {
+  log "--- Verifying remote restic repository ---"
+
+  # Load repository settings
+  if [[ -f "$HOME/.ssh/restic_env" ]]; then
+    source "$HOME/.ssh/restic_env"
+  else
+    log "!!! Missing restic_env file, cannot set repository or password"
+    exit 1
+  fi
+
+  # Use SSH wrapper to force the backup key
+  export RESTIC_RSH="$HOME/.local/bin/restic_ssh_key"
+
+  # Run check on the remote repository via SFTP
+  restic -r "sftp:${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}" check || {
+    log "!!! Remote restic repository check failed"
+    exit 1
+  }
+}
+
+(return 0 2>/dev/null) || main "${@}"
