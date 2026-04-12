@@ -1,0 +1,157 @@
+format = """
+[░▒▓](#a3aed2)\
+$os\
+${custom.chezmoi}\
+[](bg:#769ff0 fg:#a3aed2)\
+${custom.distrobox}\
+[](bg:#769ff0 fg:#a3aed2)\
+$directory\
+[](fg:#769ff0 bg:#394260)\
+$git_branch\
+$git_status\
+[](fg:#394260 bg:#212736)\
+$nodejs\
+$rust\
+$golang\
+$php\
+[](fg:#212736 bg:#1d2230)\
+\n$character"""
+
+
+[directory]
+style = "fg:#e3e5e5 bg:#769ff0"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[os]
+disabled = false
+style = "bold green"
+# format = "[ $symbol ]($style)"
+format = '[[ $symbol](bg:#a3aed2 fg:#090c0c)]($style)'
+
+[git_branch]
+symbol = ""
+style = "bg:#394260"
+format = '[[ $symbol $branch ](fg:#769ff0 bg:#394260)]($style)'
+
+[git_status]
+style = "bg:#394260"
+format = '[[($all_status$ahead_behind )](fg:#769ff0 bg:#394260)]($style)'
+
+[nodejs]
+symbol = ""
+style = "bg:#212736"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+
+[rust]
+symbol = ""
+style = "bg:#212736"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+
+[golang]
+symbol = ""
+style = "bg:#212736"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+
+[php]
+symbol = ""
+style = "bg:#212736"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "bg:#1d2230"
+format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
+
+# Custom configurations...
+[custom.chezmoi]
+symbol = "📦"
+command = '''
+if [ -n "$CHEZMOI" ]:then
+  echo "$CHEZMOI" >/dev/null
+fi
+'''
+when = '''
+[ -n "$CHEZMOI" ]
+'''
+# format = "${output:+📦 [$output]($style)} "
+format = '[[ $symbol CHEZMOI](bg:#a3aed2 fg:#090c0c)]($style)'
+style = "bold green"
+description = "Show Distrobox container name"
+
+[custom.distrobox]
+symbol = "📦"
+command = '''
+if [ -n "$DISTROBOX_ENTER_PATH" ] && [ -f /run/.containerenv ]; then
+    grep -oP '(?<=name=")[^"]+' /run/.containerenv 2>/dev/null
+fi
+'''
+when = '''
+[ -n "$DISTROBOX_ENTER_PATH" ] && [ -f /run/.containerenv ]
+'''
+# format = "${output:+📦 [$output]($style)} "
+format = '[[ $symbol $output](bg:#a3aed2 fg:#090c0c)]($style)'
+style = "bold green"
+description = "Show Distrobox container name"
+
+[os.symbols]
+AIX = "➿ "
+Alpaquita = "🔔 "
+AlmaLinux = " "        # nf-linux-almalinux
+Alpine = " "           # nf-linux-alpine
+Amazon = "🙂 "
+Android = " "          # nf-fa-android
+Arch = " "             # nf-linux-archlinux
+Artix = " "            # nf-linux-artix
+Bluefin = "🐟 "
+CachyOS = "🎗️ "
+CentOS = " "           # nf-linux-centos
+Debian = " "           # nf-linux-debian
+DragonFly = "🐉 "
+Emscripten = "🔗 "
+EndeavourOS = " "      # nf-linux-endeavour
+Fedora = " "           # nf-linux-fedora
+FreeBSD = " "          # nf-linux-freebsd
+Garuda = " "           # nf-linux-garuda
+Gentoo = " "           # nf-linux-gentoo
+HardenedBSD = "🛡️ "
+Illumos = " "          # nf-linux-illumos
+Kali = " "             # nf-linux-kali_linux
+Linux = " "            # nf-linux-tux
+Mabox = "📦 "
+Macos = " "            # nf-linux-apple
+Manjaro = " "          # nf-linux-manjaro
+Mariner = "🌊 "
+MidnightBSD = "🌘 "
+Mint = " "             # nf-linux-linuxmint
+NetBSD = "🚩 "
+NixOS = " "            # nf-linux-nixos
+Nobara = " "           # nf-linux-nobara
+OpenBSD = " "          # nf-linux-openbsd
+OpenCloudOS = "☁️ "
+openEuler = "🦉 "
+openSUSE = " "         # nf-linux-opensuse
+OracleLinux = " "      # nf-dev-oracle
+Pop = " "              # nf-linux-pop_os
+Raspbian = " "         # nf-linux-raspberry_pi
+Redhat = " "           # nf-linux-redhat
+RedHatEnterprise = " " # nf-linux-redhat
+RockyLinux = " "       # nf-linux-rocky_linux
+Redox = "🧪 "
+Solus = " "            # nf-linux-solus
+SUSE = " "             # nf-fa-suse
+Ubuntu = " "           # nf-linux-ubuntu
+Ultramarine = "🔷 "
+Unknown = "❓ "
+Uos = "🐲 "
+Void = " "             # nf-linux-void
+Windows = " "          # nf-custom-windows
+
