@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+source "${HOME}/.ssh/restic_env"
+
+mkdir -p /tmp/mybackup
+
+restic mount /tmp/mybackup
