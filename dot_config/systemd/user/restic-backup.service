@@ -1,0 +1,14 @@
+[Unit]
+Description=Restic backup + rsync to remote host
+After=network.target
+
+[Service]
+Type=oneshot
+User=dabrown
+Environment="HOME=/home/dabrown"
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+ExecStart=/home/dabrown/.local/bin/restic_backup.sh
+
+[Install]
+WantedBy=multi-user.target

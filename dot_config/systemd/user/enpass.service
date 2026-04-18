@@ -1,0 +1,12 @@
+[Unit]
+Description=Enpass Password Manager (headless)
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/enpass -minimize
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
